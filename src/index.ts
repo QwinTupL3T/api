@@ -38,6 +38,13 @@ app.get('/sets', async (req, res) => {
     res.send(sets);
 });
 
+//Get a single set
+app.get('/sets/:id', async (req, res) => {
+    const { id } = req.params;
+    const set = await client.db.sets.read(id);
+    res.send(set);
+});
+
 app.listen(PORT, () => {
     console.log(`App listening on port ${PORT}`);
 });
