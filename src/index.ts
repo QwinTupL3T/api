@@ -107,6 +107,25 @@ app.delete('/sets/:id', async (req, res) => {
     res.send({ success: true });
   });
 
+// Create a new card
+app.post('/cards', async (req, res) => {
+    const { set, question, answer } = req.body;
+    const card = await client.db.cards.create({
+      set,
+      question,
+      answer,
+    });
+  
+    if (card) {
+      await client.db.sets.update(set, {
+        cards: {
+          $increment: 1,
+        },
+      });
+    }
+    res.send(card);
+  });
+
 app.listen(PORT, () => {
     console.log(`App listening on port ${PORT}`);
 });
