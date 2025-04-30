@@ -111,27 +111,46 @@ app.delete('/sets/:id', async (req, res) => {
 app.post('/cards', async (req, res) => {
     const { set, question, answer } = req.body;
     const card = await client.db.cards.create({
-      set,
-      question,
-      answer,
+        set,
+        question,
+        answer,
     });
   
     if (card) {
-      await client.db.sets.update(set, {
-        cards: {
-          $increment: 1,
-        },
-      });
+        await client.db.sets.update(set, {
+            cards: {
+                $increment: 1,
+            },
+        });
     }
     res.send(card);
-  });
+});
 
   // Get all cards of a set
 app.get('/cards', async (req, res) => {
     const { setid } = req.query;
     const cards = await client.db.cards.select(['*', 'set.*']).filter({ set: setid }).getAll();
     res.send(cards);
-  });
+});
+
+// Learn a specific number of cards from a set
+app.get('/cards/learn', async (req, res) => {
+    const { setid, limit } = req.query;
+  
+    const cards = await client.db.cards
+        .select(['question', 'answer', 'image_link'])
+        .filter({ set: setid })
+        .getAll();
+  
+    // Get a random set of cards using limit
+    const randomCards = cards
+        .map((value) => ({ value, sort: Math.random() }))
+        .sort((a, b) => a.sort - b.sort)
+        .map(({ value }) => value)
+        .slice(0, +limit!);
+  
+    res.send(randomCards);
+});
 
 app.listen(PORT, () => {
     console.log(`App listening on port ${PORT}`);
