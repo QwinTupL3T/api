@@ -70,8 +70,28 @@ app.post('/sets', async (req, res) => {
         console.error('Failed to create set:', err);
         res.status(500).json({ error: 'Failed to create set' });
     }
-  });
+});
+
+// Add a set to user favorites
+app.post('/usersets', async (req, res) => {
+    const { user, set } = req.body;
+    const userSet = await client.db.user_sets.create({
+      user,
+      set,
+    });
+    res.send(userSet);
+});
+
+// Get all user sets
+app.get('/usersets', async (req, res) => {
+    const { user } = req.query;
   
+    const sets = await client.db.user_sets
+      .select(['xata_id', 'set.*'])
+      .filter({ user: `${user}` })
+      .getAll();
+    res.send(sets);
+  });
 
 app.listen(PORT, () => {
     console.log(`App listening on port ${PORT}`);
