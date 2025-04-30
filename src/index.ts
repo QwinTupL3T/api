@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import express from 'express';
-import { XataClient  } from './xata';
+import { SetsRecord, XataClient  } from './xata';
 import { cardsCapitals, cardsProgramming, sets } from './seed_database';
 
 const PORT = parseInt(process.env.PORT || '3000', 10);
@@ -91,6 +91,20 @@ app.get('/usersets', async (req, res) => {
       .filter({ user: `${user}` })
       .getAll();
     res.send(sets);
+  });
+
+// Remove a set
+app.delete('/sets/:id', async (req, res) => {
+    const { id } = req.params;
+    const existingSets = await client.db.user_sets.filter({ set: id }).getAll();
+  
+    if (existingSets.length > 0) {
+      const toDelete = existingSets.map((set: SetsRecord) => set.xata_id);
+      await client.db.user_sets.delete(toDelete);
+    }
+    await client.db.sets.delete(id);
+  
+    res.send({ success: true });
   });
 
 app.listen(PORT, () => {
