@@ -45,6 +45,34 @@ app.get('/sets/:id', async (req, res) => {
     res.send(set);
 });
 
+
+// Create a new set
+app.post('/sets', async (req, res) => {
+    const {
+      title,
+      description,
+      private: isPrivate,
+      creator,
+      imageLink // renamed to “imageLink” on the client side
+    } = req.body;
+  
+    try {
+      const newSet = await client.db.sets.create({
+        title,
+        description,
+        private: isPrivate,
+        creator,
+        image_link: imageLink || null   // ← write to image_link column
+      });
+  
+      res.status(201).json(newSet);
+    } catch (err) {
+      console.error('Failed to create set:', err);
+      res.status(500).json({ error: 'Failed to create set' });
+    }
+  });
+  
+
 app.listen(PORT, () => {
     console.log(`App listening on port ${PORT}`);
 });
