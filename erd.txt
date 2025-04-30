@@ -1,0 +1,33 @@
+# Visualize on https://quick-erd.surge.sh
+# Relationship Types:
+#   -    - one to one
+#   -<   - one to many
+#   >-   - many to one
+#   >-<  - many to many
+#   -0   - one to zero or one
+#   0-   - zero or one to one
+#   0-0  - zero or one to zero or one
+#   -0<  - one to zero or many
+#   >0-  - zero or many to one
+
+# Flashcards Master Schema (Sets and Cards)
+
+sets
+----
+# Таблица наборов карточек
+id           varchar(50) PK
+title        varchar(255)
+description  text
+private      boolean
+cards        integer  # количество карточек в наборе
+
+cards
+-----
+# Таблица карточек
+question     text
+answer       text
+set          varchar(50) FK  # ссылка на sets.id
+
+# Relationships
+sets -< cards : id = set
+
