@@ -167,6 +167,16 @@ app.post('/learnings', async (req, res) => {
     res.send(learning);
 });
 
+// Get user learning progress
+app.get('/learnings', async (req, res) => {
+    const { user } = req.query;
+    const learnings = await client.db.learnings
+        .select(['*', 'set.*'])
+        .filter({ user: `${user}` })
+        .getAll();
+    res.send(learnings);
+});
+
 app.listen(PORT, () => {
     console.log(`App listening on port ${PORT}`);
 });
