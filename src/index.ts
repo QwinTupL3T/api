@@ -152,6 +152,21 @@ app.get('/cards/learn', async (req, res) => {
     res.send(randomCards);
 });
 
+// Start learning progress
+app.post('/learnings', async (req, res) => {
+    const { user, set, cardsTotal, correct, wrong } = req.body;
+    const obj = {
+        user,
+        set,
+        cards_total: +cardsTotal,
+        cards_correct: +correct,
+        cards_wrong: +wrong,
+        score: (+correct / +cardsTotal) * 100,
+    };
+    const learning = await client.db.learnings.create(obj);
+    res.send(learning);
+});
+
 app.listen(PORT, () => {
     console.log(`App listening on port ${PORT}`);
 });
