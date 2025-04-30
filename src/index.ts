@@ -126,6 +126,13 @@ app.post('/cards', async (req, res) => {
     res.send(card);
   });
 
+  // Get all cards of a set
+app.get('/cards', async (req, res) => {
+    const { setid } = req.query;
+    const cards = await client.db.cards.select(['*', 'set.*']).filter({ set: setid }).getAll();
+    res.send(cards);
+  });
+
 app.listen(PORT, () => {
     console.log(`App listening on port ${PORT}`);
 });
