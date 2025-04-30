@@ -49,26 +49,26 @@ app.get('/sets/:id', async (req, res) => {
 // Create a new set
 app.post('/sets', async (req, res) => {
     const {
-      title,
-      description,
-      private: isPrivate,
-      creator,
-      imageLink // renamed to “imageLink” on the client side
-    } = req.body;
-  
-    try {
-      const newSet = await client.db.sets.create({
         title,
         description,
         private: isPrivate,
         creator,
-        image_link: imageLink || null   // ← write to image_link column
-      });
+        imageLink // renamed to “imageLink” on the client side
+    } = req.body;
   
-      res.status(201).json(newSet);
+    try {
+        const newSet = await client.db.sets.create({
+            title,
+            description,
+            private: isPrivate,
+            creator,
+            image_link: imageLink || null   // ← write to image_link column
+        });
+  
+        res.status(201).json(newSet);
     } catch (err) {
-      console.error('Failed to create set:', err);
-      res.status(500).json({ error: 'Failed to create set' });
+        console.error('Failed to create set:', err);
+        res.status(500).json({ error: 'Failed to create set' });
     }
   });
   
